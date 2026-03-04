@@ -167,8 +167,9 @@
 </head>
 <body>
     <script>
-        import { Analytics } from "@vercel/analytics/next"
+        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
     </script>
+    <script defer src="/_vercel/insights/script.js"></script>
 
     <div id="custom-cursor"></div>
     <div class="mesh"></div>
