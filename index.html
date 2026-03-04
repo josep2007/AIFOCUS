@@ -11,6 +11,12 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#6366f1">
     
+    <!-- Vercel Web Analytics -->
+    <script>
+        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap');
 
@@ -166,10 +172,6 @@
     </style>
 </head>
 <body>
-    <script>
-        import { Analytics } from "@vercel/analytics/next"
-    </script>
-
     <div id="custom-cursor"></div>
     <div class="mesh"></div>
 
