@@ -84,17 +84,29 @@
             object-fit: cover;
         }
 
-        h1 { font-size: clamp(3.5rem, 12vw, 7rem); font-weight: 900; letter-spacing: -5px; line-height: 0.9; }
+        h1 { 
+            font-size: clamp(3.5rem, 12vw, 7rem); 
+            font-weight: 900; 
+            letter-spacing: -5px; 
+            line-height: 0.9; 
+            padding: 10px 0;
+        }
+
         h1 span {
             background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-size: 200% auto;
             animation: gradShift 4s linear infinite;
+            display: inline-block;
+            white-space: nowrap;
+            padding-right: 25px; /* Solución para la P cortada */
+            padding-left: 5px;
         }
+
         @keyframes gradShift { to { background-position: 200% center; } }
 
-        /* --- CARRUSEL INFINITO CORREGIDO --- */
+        /* --- CARRUSEL --- */
         .carousel-container {
             width: 100%;
             overflow: hidden;
@@ -105,7 +117,6 @@
 
         .carousel-track {
             display: flex;
-            /* El ancho debe ser suficiente para las 8 tarjetas + gaps */
             width: calc((300px + 40px) * 8); 
             animation: scroll-carousel 30s linear infinite;
             gap: 40px;
@@ -129,7 +140,6 @@
 
         @keyframes scroll-carousel {
             0% { transform: translateX(0); }
-            /* Se desplaza exactamente la mitad (4 tarjetas + sus gaps) */
             100% { transform: translateX(calc(-340px * 4)); }
         }
 
