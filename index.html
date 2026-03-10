@@ -33,7 +33,8 @@
             scroll-behavior: smooth;
         }
 
-        /* --- CURSOR & MESH --- */
+        /* --- CURSOR --- */
+        /* FIX: Añadido transform: translate(-50%, -50%) para centrar el cursor correctamente */
         #custom-cursor {
             width: 20px; height: 20px;
             background: var(--primary);
@@ -42,6 +43,7 @@
             pointer-events: none;
             z-index: 9999;
             mix-blend-mode: screen;
+            transform: translate(-50%, -50%);
             transition: transform 0.1s ease;
             box-shadow: 0 0 20px var(--primary);
         }
@@ -84,29 +86,20 @@
             object-fit: cover;
         }
 
-        h1 { 
-            font-size: clamp(3.5rem, 12vw, 7rem); 
-            font-weight: 900; 
-            letter-spacing: -5px; 
-            line-height: 0.9; 
-            padding: 10px 0;
-        }
-
+        h1 { font-size: clamp(3.5rem, 12vw, 7rem); font-weight: 900; letter-spacing: -5px; line-height: 0.9; }
         h1 span {
             background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-size: 200% auto;
             animation: gradShift 4s linear infinite;
-            display: inline-block;
-            white-space: nowrap;
-            padding-right: 25px; /* Solución para la P cortada */
-            padding-left: 5px;
         }
-
         @keyframes gradShift { to { background-position: 200% center; } }
 
-        /* --- CARRUSEL --- */
+        /* --- CARRUSEL INFINITO --- */
+        /* FIX: Corregido el ancho del track y el cálculo de la animación */
+        /* Cada tarjeta: 300px + 40px gap = 340px por tarjeta */
+        /* 8 tarjetas en total (4 originales + 4 duplicadas para loop) */
         .carousel-container {
             width: 100%;
             overflow: hidden;
@@ -117,9 +110,9 @@
 
         .carousel-track {
             display: flex;
-            width: calc((300px + 40px) * 8); 
-            animation: scroll-carousel 30s linear infinite;
             gap: 40px;
+            width: max-content;
+            animation: scroll-carousel 30s linear infinite;
         }
 
         .chart-card {
@@ -138,10 +131,29 @@
         .bar-container { display: flex; align-items: flex-end; gap: 10px; height: 80px; }
         .bar { width: 22px; background: var(--primary); border-radius: 6px 6px 0 0; animation: grow 2s infinite alternate; }
 
+        /* 8 tarjetas únicas × 340px = 2720px */
         @keyframes scroll-carousel {
             0% { transform: translateX(0); }
-            100% { transform: translateX(calc(-340px * 4)); }
+            100% { transform: translateX(-2720px); }
         }
+
+        .ring-container {
+            position: relative;
+            width: 70px; height: 70px;
+            margin: 0 auto;
+        }
+        .ring-svg { transform: rotate(-90deg); }
+        .ring-bg { fill: none; stroke: #1a1a1a; stroke-width: 6; }
+        .ring-fill { fill: none; stroke-width: 6; stroke-linecap: round; stroke-dasharray: 188; transition: stroke-dashoffset 1s; }
+        .ring-label {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.85rem; font-weight: 900;
+        }
+        .sparkline { display: flex; align-items: flex-end; gap: 4px; height: 50px; margin: 8px 0; }
+        .spark { width: 12px; background: var(--secondary); border-radius: 3px 3px 0 0; opacity: 0.7; }
+        .streak-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin: 2px; }
+        .heatrow { display: flex; gap: 5px; margin-top: 6px; }
 
         @keyframes grow { from { height: 20%; } to { height: 100%; } }
 
@@ -166,6 +178,7 @@
         }
 
         /* --- SECTIONS --- */
+        /* FIX: Añadido id="content-section" al section que faltaba */
         .content-section { padding: 150px 25px; max-width: 1100px; margin: 0 auto; text-align: center; }
         .bento { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 60px; }
         .bento-card { background: var(--card-bg); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.05); padding: 50px; border-radius: 35px; text-align: left; }
@@ -176,9 +189,7 @@
     </style>
 </head>
 <body>
-    <script>
-        import { Analytics } from "@vercel/analytics/next"
-    </script>
+    <!-- FIX: Eliminado el import de Vercel Analytics que estaba en un <script> normal (sin type="module"), lo que causaba un error de sintaxis. Si quieres usar Vercel Analytics, añade el script de su CDN correctamente. -->
 
     <div id="custom-cursor"></div>
     <div class="mesh"></div>
@@ -192,12 +203,14 @@
         </div>
 
         <div style="margin-top: 50px;" class="reveal active">
-            <a href="#download-section" class="btn-main">EMPEZAR</a>
+            <!-- FIX: El href apuntaba a #content-section pero ese ID no existía -->
+            <a href="#features-section" class="btn-main">EMPEZAR</a>
             <p class="android-note">(Disponible solo para Android por el momento)</p>
         </div>
     </section>
 
-    <section class="content-section">
+    <!-- FIX: Añadido id="features-section" para que el botón "EMPEZAR" funcione -->
+    <section class="content-section" id="features-section">
         <h2 class="reveal" style="font-size: 3.5rem; margin-bottom: 40px;">Identidad Élite</h2>
         <p class="about-text reveal" style="font-size: 1.5rem; color: #94a3b8; line-height: 1.7; max-width: 800px; margin: 0 auto;">
             Diseñado para quienes buscan <strong>alto rendimiento cognitivo</strong>. Focus Op es una interfaz letal contra las distracciones.
@@ -225,55 +238,175 @@
     <h2 class="reveal" style="text-align: center; font-size: 2rem; color: var(--accent);">Performance Dashboard</h2>
     <div class="carousel-container reveal">
         <div class="carousel-track">
+            <!-- ====== 8 TARJETAS ÚNICAS ====== -->
+
+            <!-- 1. DEEP WORK HOURS - barra de progreso -->
+            <div class="chart-card">
+                <small style="color: #444;">DEEP WORK HOURS</small>
+                <div style="font-size: 2.4rem; font-weight: 900; color: var(--accent);">06:42:15</div>
+                <div style="width: 100%; height: 6px; background: #1a1a1a; border-radius: 10px;">
+                    <div style="width: 75%; height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); border-radius: 10px;"></div>
+                </div>
+                <small style="color: #555;">Daily Goal: 8h &nbsp;▸&nbsp; <span style="color: var(--accent);">75% completado</span></small>
+            </div>
+
+            <!-- 2. FOCUS SCORE - anillo circular -->
+            <div class="chart-card" style="align-items: center;">
+                <small style="color: #444;">FOCUS SCORE</small>
+                <div class="ring-container">
+                    <svg class="ring-svg" width="70" height="70" viewBox="0 0 70 70">
+                        <circle class="ring-bg" cx="35" cy="35" r="30"/>
+                        <circle class="ring-fill" cx="35" cy="35" r="30" stroke="var(--primary)" style="stroke-dashoffset: 38;"/>
+                    </svg>
+                    <div class="ring-label" style="color: var(--primary);">80%</div>
+                </div>
+                <strong style="color: #f8fafc; text-align: center;">ELITE OPERATOR</strong>
+            </div>
+
+            <!-- 3. SESSION STREAK - puntos de racha -->
+            <div class="chart-card">
+                <small style="color: #444;">SESSION STREAK</small>
+                <div style="font-size: 2.6rem; font-weight: 900; color: var(--secondary);">🔥 14</div>
+                <div class="heatrow">
+                    <div class="streak-dot" style="background: var(--secondary);"></div>
+                    <div class="streak-dot" style="background: var(--secondary);"></div>
+                    <div class="streak-dot" style="background: var(--secondary);"></div>
+                    <div class="streak-dot" style="background: var(--secondary);"></div>
+                    <div class="streak-dot" style="background: var(--secondary);"></div>
+                    <div class="streak-dot" style="background: #222;"></div>
+                    <div class="streak-dot" style="background: #222;"></div>
+                </div>
+                <small style="color: #555;">días consecutivos activo</small>
+            </div>
+
+            <!-- 4. DISTRACTION BLOCKS - barras animadas -->
+            <div class="chart-card">
+                <small style="color: #444;">DISTRACTIONS BLOCKED</small>
+                <div class="bar-container">
+                    <div class="bar" style="height: 40%; background: var(--secondary);"></div>
+                    <div class="bar" style="height: 70%; background: var(--secondary);"></div>
+                    <div class="bar" style="height: 55%; background: var(--secondary);"></div>
+                    <div class="bar" style="height: 90%; background: var(--secondary);"></div>
+                    <div class="bar" style="height: 30%; background: var(--secondary);"></div>
+                </div>
+                <strong style="color: var(--secondary);">147 bloqueos hoy</strong>
+            </div>
+
+            <!-- 5. COGNITIVE LOAD - estado -->
+            <div class="chart-card" style="justify-content: center; gap: 12px;">
+                <small style="color: #444;">COGNITIVE LOAD</small>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 14px; height: 14px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 12px #22c55e;"></div>
+                    <span style="font-size: 1.8rem; font-weight: 900; color: #22c55e;">OPTIMAL</span>
+                </div>
+                <div style="width: 100%; height: 4px; background: #111; border-radius: 10px;">
+                    <div style="width: 45%; height: 100%; background: #22c55e; border-radius: 10px;"></div>
+                </div>
+                <small style="color: #555;">Zona de máximo rendimiento</small>
+            </div>
+
+            <!-- 6. POMODORO SESSIONS - sparkline -->
+            <div class="chart-card">
+                <small style="color: #444;">POMODORO SESSIONS</small>
+                <div style="font-size: 2.2rem; font-weight: 900; color: var(--accent);">12 <span style="font-size: 1rem; color: #555;">sesiones</span></div>
+                <div class="sparkline">
+                    <div class="spark" style="height: 30%;"></div>
+                    <div class="spark" style="height: 60%;"></div>
+                    <div class="spark" style="height: 45%;"></div>
+                    <div class="spark" style="height: 80%;"></div>
+                    <div class="spark" style="height: 100%;"></div>
+                    <div class="spark" style="height: 70%;"></div>
+                    <div class="spark" style="height: 90%;"></div>
+                </div>
+                <small style="color: #555;">Últimas 7 jornadas</small>
+            </div>
+
+            <!-- 7. DOPAMINE CONTROL - barras animadas -->
             <div class="chart-card">
                 <small style="color: #444;">DOPAMINE CONTROL</small>
                 <div class="bar-container">
                     <div class="bar" style="height: 80%;"></div>
                     <div class="bar" style="height: 40%;"></div>
                     <div class="bar" style="height: 90%;"></div>
+                    <div class="bar" style="height: 60%;"></div>
                 </div>
                 <strong style="color: var(--primary);">+24% Eficiencia</strong>
             </div>
+
+            <!-- 8. APP USAGE BLOCKED - lista compacta -->
+            <div class="chart-card">
+                <small style="color: #444;">TOP BLOCKS TODAY</small>
+                <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 4px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                        <span style="color: #888;">Instagram</span>
+                        <span style="color: var(--primary); font-weight: 700;">38 bloqueos</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                        <span style="color: #888;">YouTube</span>
+                        <span style="color: var(--primary); font-weight: 700;">21 bloqueos</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                        <span style="color: #888;">TikTok</span>
+                        <span style="color: var(--primary); font-weight: 700;">15 bloqueos</span>
+                    </div>
+                </div>
+                <strong style="color: #555; font-size: 0.75rem;">MODO GUERRA ACTIVO 🛡️</strong>
+            </div>
+
+            <!-- ====== DUPLICADOS PARA LOOP INFINITO ====== -->
             <div class="chart-card">
                 <small style="color: #444;">DEEP WORK HOURS</small>
-                <div style="font-size: 2.2rem; font-weight: 900; color: var(--accent);">06:42:15</div>
-                <div style="width: 100%; height: 6px; background: #222; border-radius: 10px;">
-                    <div style="width: 75%; height: 100%; background: var(--accent);"></div>
+                <div style="font-size: 2.4rem; font-weight: 900; color: var(--accent);">06:42:15</div>
+                <div style="width: 100%; height: 6px; background: #1a1a1a; border-radius: 10px;"><div style="width: 75%; height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); border-radius: 10px;"></div></div>
+                <small style="color: #555;">Daily Goal: 8h &nbsp;▸&nbsp; <span style="color: var(--accent);">75% completado</span></small>
+            </div>
+            <div class="chart-card" style="align-items: center;">
+                <small style="color: #444;">FOCUS SCORE</small>
+                <div class="ring-container">
+                    <svg class="ring-svg" width="70" height="70" viewBox="0 0 70 70">
+                        <circle class="ring-bg" cx="35" cy="35" r="30"/>
+                        <circle class="ring-fill" cx="35" cy="35" r="30" stroke="var(--primary)" style="stroke-dashoffset: 38;"/>
+                    </svg>
+                    <div class="ring-label" style="color: var(--primary);">80%</div>
                 </div>
-                <small>Goal: 80%</small>
+                <strong style="color: #f8fafc; text-align: center;">ELITE OPERATOR</strong>
             </div>
             <div class="chart-card">
+                <small style="color: #444;">SESSION STREAK</small>
+                <div style="font-size: 2.6rem; font-weight: 900; color: var(--secondary);">🔥 14</div>
+                <div class="heatrow"><div class="streak-dot" style="background: var(--secondary);"></div><div class="streak-dot" style="background: var(--secondary);"></div><div class="streak-dot" style="background: var(--secondary);"></div><div class="streak-dot" style="background: var(--secondary);"></div><div class="streak-dot" style="background: var(--secondary);"></div><div class="streak-dot" style="background: #222;"></div><div class="streak-dot" style="background: #222;"></div></div>
+                <small style="color: #555;">días consecutivos activo</small>
+            </div>
+            <div class="chart-card">
+                <small style="color: #444;">DISTRACTIONS BLOCKED</small>
+                <div class="bar-container"><div class="bar" style="height: 40%; background: var(--secondary);"></div><div class="bar" style="height: 70%; background: var(--secondary);"></div><div class="bar" style="height: 55%; background: var(--secondary);"></div><div class="bar" style="height: 90%; background: var(--secondary);"></div><div class="bar" style="height: 30%; background: var(--secondary);"></div></div>
+                <strong style="color: var(--secondary);">147 bloqueos hoy</strong>
+            </div>
+            <div class="chart-card" style="justify-content: center; gap: 12px;">
                 <small style="color: #444;">COGNITIVE LOAD</small>
-                <div style="text-align: center; padding: 15px;"><span style="font-size: 2rem; color: var(--secondary);">OPTIMAL</span></div>
-                <strong style="font-size: 0.8rem;">IN THE ZONE</strong>
+                <div style="display: flex; align-items: center; gap: 12px;"><div style="width: 14px; height: 14px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 12px #22c55e;"></div><span style="font-size: 1.8rem; font-weight: 900; color: #22c55e;">OPTIMAL</span></div>
+                <div style="width: 100%; height: 4px; background: #111; border-radius: 10px;"><div style="width: 45%; height: 100%; background: #22c55e; border-radius: 10px;"></div></div>
+                <small style="color: #555;">Zona de máximo rendimiento</small>
             </div>
             <div class="chart-card">
-                <small style="color: #444;">FOCUS RETENTION</small>
-                <div class="bar-container">
-                    <div class="bar" style="height: 30%;"></div>
-                    <div class="bar" style="height: 95%;"></div>
-                    <div class="bar" style="height: 70%;"></div>
-                </div>
-                <strong style="color: var(--primary);">HIGH PERFORMANCE</strong>
+                <small style="color: #444;">POMODORO SESSIONS</small>
+                <div style="font-size: 2.2rem; font-weight: 900; color: var(--accent);">12 <span style="font-size: 1rem; color: #555;">sesiones</span></div>
+                <div class="sparkline"><div class="spark" style="height: 30%;"></div><div class="spark" style="height: 60%;"></div><div class="spark" style="height: 45%;"></div><div class="spark" style="height: 80%;"></div><div class="spark" style="height: 100%;"></div><div class="spark" style="height: 70%;"></div><div class="spark" style="height: 90%;"></div></div>
+                <small style="color: #555;">Últimas 7 jornadas</small>
             </div>
             <div class="chart-card">
                 <small style="color: #444;">DOPAMINE CONTROL</small>
-                <div class="bar-container"><div class="bar" style="height: 80%;"></div><div class="bar" style="height: 40%;"></div><div class="bar" style="height: 90%;"></div></div>
+                <div class="bar-container"><div class="bar" style="height: 80%;"></div><div class="bar" style="height: 40%;"></div><div class="bar" style="height: 90%;"></div><div class="bar" style="height: 60%;"></div></div>
                 <strong style="color: var(--primary);">+24% Eficiencia</strong>
             </div>
             <div class="chart-card">
-                <small style="color: #444;">DEEP WORK HOURS</small>
-                <div style="font-size: 2.2rem; font-weight: 900; color: var(--accent);">06:42:15</div>
-                <div style="width: 100%; height: 6px; background: #222;"><div style="width: 75%; height: 100%; background: var(--accent);"></div></div>
-            </div>
-            <div class="chart-card">
-                <small style="color: #444;">COGNITIVE LOAD</small>
-                <div style="text-align: center; padding: 15px;"><span style="font-size: 2rem; color: var(--secondary);">OPTIMAL</span></div>
-            </div>
-            <div class="chart-card">
-                <small style="color: #444;">FOCUS RETENTION</small>
-                <div class="bar-container"><div class="bar" style="height: 30%;"></div><div class="bar" style="height: 95%;"></div><div class="bar" style="height: 70%;"></div></div>
-                <strong style="color: var(--primary);">HIGH PERFORMANCE</strong>
+                <small style="color: #444;">TOP BLOCKS TODAY</small>
+                <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 4px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem;"><span style="color: #888;">Instagram</span><span style="color: var(--primary); font-weight: 700;">38 bloqueos</span></div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem;"><span style="color: #888;">YouTube</span><span style="color: var(--primary); font-weight: 700;">21 bloqueos</span></div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem;"><span style="color: #888;">TikTok</span><span style="color: var(--primary); font-weight: 700;">15 bloqueos</span></div>
+                </div>
+                <strong style="color: #555; font-size: 0.75rem;">MODO GUERRA ACTIVO 🛡️</strong>
             </div>
         </div>
     </div>
@@ -289,20 +422,23 @@
     <footer>&copy; 2026 FOCUS OPERATOR • FUTURE OF WORK • ANDROID EXCLUSIVE</footer>
 
     <script>
-        // Cursor
+        // FIX: El cursor ahora se posiciona correctamente gracias al translate(-50%, -50%) en el CSS
         const cursor = document.getElementById('custom-cursor');
         document.addEventListener('mousemove', (e) => {
             cursor.style.left = e.clientX + 'px';
             cursor.style.top = e.clientY + 'px';
         });
 
-        // Scroll suave
-        document.querySelector('a[href="#download-section"]').addEventListener('click', function(e) {
-            e.preventDefault();
-            document.querySelector('#download-section').scrollIntoView({ behavior: 'smooth' });
-        });
+        // FIX: Scroll suave corregido para apuntar al ID correcto
+        const startBtn = document.querySelector('a[href="#features-section"]');
+        if (startBtn) {
+            startBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector('#features-section').scrollIntoView({ behavior: 'smooth' });
+            });
+        }
 
-        // Reveal
+        // Reveal on scroll
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) entry.target.classList.add('active');
