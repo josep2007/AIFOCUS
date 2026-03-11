@@ -10,6 +10,9 @@
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#6366f1">
+
+    <!-- Vercel Analytics (HTML vanilla) -->
+    <script defer src="/_vercel/insights/script.js"></script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap');
@@ -34,7 +37,6 @@
         }
 
         /* --- CURSOR --- */
-        /* FIX: Añadido transform: translate(-50%, -50%) para centrar el cursor correctamente */
         #custom-cursor {
             width: 20px; height: 20px;
             background: var(--primary);
@@ -97,9 +99,6 @@
         @keyframes gradShift { to { background-position: 200% center; } }
 
         /* --- CARRUSEL INFINITO --- */
-        /* FIX: Corregido el ancho del track y el cálculo de la animación */
-        /* Cada tarjeta: 300px + 40px gap = 340px por tarjeta */
-        /* 8 tarjetas en total (4 originales + 4 duplicadas para loop) */
         .carousel-container {
             width: 100%;
             overflow: hidden;
@@ -131,7 +130,6 @@
         .bar-container { display: flex; align-items: flex-end; gap: 10px; height: 80px; }
         .bar { width: 22px; background: var(--primary); border-radius: 6px 6px 0 0; animation: grow 2s infinite alternate; }
 
-        /* 8 tarjetas únicas × 340px = 2720px */
         @keyframes scroll-carousel {
             0% { transform: translateX(0); }
             100% { transform: translateX(-2720px); }
@@ -178,7 +176,6 @@
         }
 
         /* --- SECTIONS --- */
-        /* FIX: Añadido id="content-section" al section que faltaba */
         .content-section { padding: 150px 25px; max-width: 1100px; margin: 0 auto; text-align: center; }
         .bento { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 60px; }
         .bento-card { background: var(--card-bg); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.05); padding: 50px; border-radius: 35px; text-align: left; }
@@ -189,7 +186,6 @@
     </style>
 </head>
 <body>
-    <!-- FIX: Eliminado el import de Vercel Analytics que estaba en un <script> normal (sin type="module"), lo que causaba un error de sintaxis. Si quieres usar Vercel Analytics, añade el script de su CDN correctamente. -->
 
     <div id="custom-cursor"></div>
     <div class="mesh"></div>
@@ -203,13 +199,11 @@
         </div>
 
         <div style="margin-top: 50px;" class="reveal active">
-            <!-- FIX: El href apuntaba a #content-section pero ese ID no existía -->
             <a href="#features-section" class="btn-main">EMPEZAR</a>
             <p class="android-note">(Disponible solo para Android por el momento)</p>
         </div>
     </section>
 
-    <!-- FIX: Añadido id="features-section" para que el botón "EMPEZAR" funcione -->
     <section class="content-section" id="features-section">
         <h2 class="reveal" style="font-size: 3.5rem; margin-bottom: 40px;">Identidad Élite</h2>
         <p class="about-text reveal" style="font-size: 1.5rem; color: #94a3b8; line-height: 1.7; max-width: 800px; margin: 0 auto;">
@@ -239,8 +233,6 @@
     <div class="carousel-container reveal">
         <div class="carousel-track">
             <!-- ====== 8 TARJETAS ÚNICAS ====== -->
-
-            <!-- 1. DEEP WORK HOURS - barra de progreso -->
             <div class="chart-card">
                 <small style="color: #444;">DEEP WORK HOURS</small>
                 <div style="font-size: 2.4rem; font-weight: 900; color: var(--accent);">06:42:15</div>
@@ -249,8 +241,6 @@
                 </div>
                 <small style="color: #555;">Daily Goal: 8h &nbsp;▸&nbsp; <span style="color: var(--accent);">75% completado</span></small>
             </div>
-
-            <!-- 2. FOCUS SCORE - anillo circular -->
             <div class="chart-card" style="align-items: center;">
                 <small style="color: #444;">FOCUS SCORE</small>
                 <div class="ring-container">
@@ -262,8 +252,6 @@
                 </div>
                 <strong style="color: #f8fafc; text-align: center;">ELITE OPERATOR</strong>
             </div>
-
-            <!-- 3. SESSION STREAK - puntos de racha -->
             <div class="chart-card">
                 <small style="color: #444;">SESSION STREAK</small>
                 <div style="font-size: 2.6rem; font-weight: 900; color: var(--secondary);">🔥 14</div>
@@ -278,8 +266,6 @@
                 </div>
                 <small style="color: #555;">días consecutivos activo</small>
             </div>
-
-            <!-- 4. DISTRACTION BLOCKS - barras animadas -->
             <div class="chart-card">
                 <small style="color: #444;">DISTRACTIONS BLOCKED</small>
                 <div class="bar-container">
@@ -291,8 +277,6 @@
                 </div>
                 <strong style="color: var(--secondary);">147 bloqueos hoy</strong>
             </div>
-
-            <!-- 5. COGNITIVE LOAD - estado -->
             <div class="chart-card" style="justify-content: center; gap: 12px;">
                 <small style="color: #444;">COGNITIVE LOAD</small>
                 <div style="display: flex; align-items: center; gap: 12px;">
@@ -304,8 +288,6 @@
                 </div>
                 <small style="color: #555;">Zona de máximo rendimiento</small>
             </div>
-
-            <!-- 6. POMODORO SESSIONS - sparkline -->
             <div class="chart-card">
                 <small style="color: #444;">POMODORO SESSIONS</small>
                 <div style="font-size: 2.2rem; font-weight: 900; color: var(--accent);">12 <span style="font-size: 1rem; color: #555;">sesiones</span></div>
@@ -320,8 +302,6 @@
                 </div>
                 <small style="color: #555;">Últimas 7 jornadas</small>
             </div>
-
-            <!-- 7. DOPAMINE CONTROL - barras animadas -->
             <div class="chart-card">
                 <small style="color: #444;">DOPAMINE CONTROL</small>
                 <div class="bar-container">
@@ -332,8 +312,6 @@
                 </div>
                 <strong style="color: var(--primary);">+24% Eficiencia</strong>
             </div>
-
-            <!-- 8. APP USAGE BLOCKED - lista compacta -->
             <div class="chart-card">
                 <small style="color: #444;">TOP BLOCKS TODAY</small>
                 <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 4px;">
@@ -414,7 +392,7 @@
     <section class="hero" id="download-section" style="height: auto; padding: 180px 20px;">
         <h2 class="reveal" style="font-size: 3.5rem;">¿Listo para subir de nivel?</h2>
         <div style="margin-top: 50px;" class="reveal">
-            <a href="https://www.mediafire.com/file/g24rbcs6m6mdh1m/focus-op+v0.1.apk/file" target="_blank" class="btn-main">INSTALAR FOCUS OP</a>
+            <a href="https://www.mediafire.com/file/wjrsxnws2gnmota/AIFocusOP+v0.1.0.apk/file" target="_blank" class="btn-main">INSTALAR FOCUS OP</a>
             <p class="android-note">(Disponible solo para Android por el momento)</p>
         </div>
     </section>
@@ -422,14 +400,12 @@
     <footer>&copy; 2026 FOCUS OPERATOR • FUTURE OF WORK • ANDROID EXCLUSIVE</footer>
 
     <script>
-        // FIX: El cursor ahora se posiciona correctamente gracias al translate(-50%, -50%) en el CSS
         const cursor = document.getElementById('custom-cursor');
         document.addEventListener('mousemove', (e) => {
             cursor.style.left = e.clientX + 'px';
             cursor.style.top = e.clientY + 'px';
         });
 
-        // FIX: Scroll suave corregido para apuntar al ID correcto
         const startBtn = document.querySelector('a[href="#features-section"]');
         if (startBtn) {
             startBtn.addEventListener('click', function(e) {
@@ -438,7 +414,6 @@
             });
         }
 
-        // Reveal on scroll
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) entry.target.classList.add('active');
