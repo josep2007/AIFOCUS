@@ -130,6 +130,7 @@
         .bar-container { display: flex; align-items: flex-end; gap: 10px; height: 80px; }
         .bar { width: 22px; background: var(--primary); border-radius: 6px 6px 0 0; animation: grow 2s infinite alternate; }
 
+        /* 8 cards × (300px + 40px gap) = 2720px */
         @keyframes scroll-carousel {
             0% { transform: translateX(0); }
             100% { transform: translateX(-2720px); }
@@ -180,9 +181,136 @@
         .bento { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 60px; }
         .bento-card { background: var(--card-bg); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.05); padding: 50px; border-radius: 35px; text-align: left; }
 
-        footer { padding: 100px 20px; text-align: center; opacity: 0.3; font-size: 0.8rem; letter-spacing: 3px; }
+        /* --- PRIVACY MODAL --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(8px);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-overlay.open { display: flex; }
 
-        @media (max-width: 768px) { h1 { font-size: 4rem; } * { cursor: auto; } #custom-cursor { display: none; } }
+        .modal-box {
+            background: #0d0d0d;
+            border: 1px solid rgba(99,102,241,0.3);
+            border-radius: 30px;
+            max-width: 760px;
+            width: 100%;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 30px 80px rgba(99,102,241,0.2);
+        }
+
+        .modal-header {
+            padding: 35px 40px 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .modal-header h2 {
+            font-size: 1.6rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .modal-close {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text);
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.1); }
+
+        .modal-body {
+            padding: 30px 40px 40px;
+            overflow-y: auto;
+            color: #94a3b8;
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+
+        .modal-body h3 {
+            color: var(--text);
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin: 28px 0 8px;
+        }
+        .modal-body h3:first-child { margin-top: 0; }
+        .modal-body p { margin-bottom: 10px; }
+        .modal-body ul { padding-left: 20px; margin-bottom: 10px; }
+        .modal-body ul li { margin-bottom: 6px; }
+        .modal-body a { color: var(--accent); text-decoration: none; }
+        .modal-body a:hover { text-decoration: underline; }
+
+        .modal-updated {
+            display: inline-block;
+            background: rgba(99,102,241,0.15);
+            border: 1px solid rgba(99,102,241,0.3);
+            border-radius: 20px;
+            padding: 4px 14px;
+            font-size: 0.78rem;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            padding: 60px 20px 40px;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.04);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: #475569;
+            text-decoration: none;
+            font-size: 0.82rem;
+            letter-spacing: 2px;
+            font-weight: 700;
+            text-transform: uppercase;
+            transition: color 0.2s;
+            cursor: pointer;
+        }
+        .footer-links a:hover { color: var(--primary); }
+
+        .footer-copy {
+            opacity: 0.25;
+            font-size: 0.75rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 4rem; }
+            * { cursor: auto; }
+            #custom-cursor { display: none; }
+            .modal-header { padding: 25px; }
+            .modal-body { padding: 20px 25px 30px; }
+        }
     </style>
 </head>
 <body>
@@ -190,6 +318,146 @@
     <div id="custom-cursor"></div>
     <div class="mesh"></div>
 
+    <!-- ====== PRIVACY MODAL ====== -->
+    <div class="modal-overlay" id="privacyModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2>🔒 Política de Privacidad</h2>
+                <button class="modal-close" id="modalClose" aria-label="Cerrar">✕</button>
+            </div>
+            <div class="modal-body">
+                <span class="modal-updated">Versión 3.0 &nbsp;·&nbsp; Última actualización: 19 de marzo de 2026</span>
+
+                <p>La presente Política de Privacidad regula el tratamiento de datos personales realizado por el desarrollador de <strong>Focus Op</strong> (en adelante, «la Aplicación»), de conformidad con el <strong>Reglamento (UE) 2016/679 (RGPD)</strong>, la <strong>Ley Orgánica 3/2018 (LOPDGDD)</strong>, la <strong>Ley 34/2002 (LSSI-CE)</strong>, el <strong>Real Decreto-ley 13/2012</strong> sobre cookies y la normativa de consumidores aplicable en España y la UE. Esta política aplica globalmente a todos los usuarios con independencia de su país de residencia.</p>
+
+                <h3>1. Responsable del Tratamiento</h3>
+                <p>Focus Op es desarrollada por un desarrollador independiente con residencia en España. El responsable del tratamiento es la persona física titular del proyecto. Para consultas, ejercicio de derechos o reclamaciones, contacta a través del correo de soporte indicado en la ficha de Google Play. Plazo de respuesta máximo: <strong>30 días naturales</strong> (art. 12 RGPD).</p>
+
+                <h3>2. Ámbito de aplicación</h3>
+                <p>Esta política aplica a la <strong>aplicación móvil Focus Op para Android</strong> (v0.1.1 y posteriores), incluyendo registro de usuarios, sincronización en la nube, estadísticas, rankings, bloqueo de apps, compras integradas y publicidad; así como al <strong>sitio web de presentación</strong> alojado en Vercel y a cualquier comunicación de soporte.</p>
+
+                <h3>3. Datos tratados, finalidades y base jurídica</h3>
+
+                <p><strong>3.1. Registro y autenticación de usuarios (Supabase Auth)</strong></p>
+                <p>Para crear y gestionar tu cuenta en Focus Op se utiliza <strong>Supabase Auth</strong>. Los datos recogidos en el proceso de registro y autenticación son: dirección de correo electrónico, contraseña (almacenada con hash bcrypt, nunca en texto plano), identificador único de usuario (UUID), fecha y hora de registro, fecha y hora del último inicio de sesión, dirección IP en el momento del registro e inicio de sesión, y tokens de sesión (JWT) con expiración automática. Estos datos se almacenan en los servidores de Supabase y son necesarios para identificarte, proteger tu cuenta y sincronizar tus datos entre dispositivos.</p>
+                <p><em>Base jurídica:</em> ejecución del contrato de uso de la Aplicación (art. 6.1.b RGPD). El registro es voluntario; sin cuenta, algunas funcionalidades de sincronización y rankings no estarán disponibles.</p>
+
+                <p style="margin-top:16px;"><strong>3.2. Sincronización de datos en la nube (Supabase Database)</strong></p>
+                <p>Los siguientes datos de productividad se almacenan en la base de datos de Supabase vinculados a tu UUID de usuario: historial de sesiones de enfoque (fecha, duración, tipo de temporizador), estadísticas acumuladas (horas totales, sesiones completadas, rachas), lista de aplicaciones bloqueadas configuradas por el usuario, preferencias y configuración de la app, y estado de la suscripción premium. Estos datos permiten sincronizar tu progreso entre dispositivos y restaurarlo si cambias de teléfono.</p>
+                <p><em>Base jurídica:</em> ejecución del contrato de uso (art. 6.1.b RGPD) e interés legítimo del usuario en conservar su historial de productividad (art. 6.1.f RGPD).</p>
+
+                <p style="margin-top:16px;"><strong>3.3. Rankings y datos compartidos públicamente (Supabase Database)</strong></p>
+                <p>Focus Op incluye funcionalidades de clasificación y rankings competitivos. Si participas en ellos, los siguientes datos serán <strong>visibles públicamente</strong> para otros usuarios de la Aplicación: nombre de usuario o alias que elijas al registrarte, puntuación o métricas de rendimiento que determinan tu posición en el ranking (horas de enfoque, sesiones completadas u otras métricas de productividad según la clasificación), y posición en el ranking global o por categorías. <strong>Tu dirección de correo electrónico, contraseña y dirección IP nunca son visibles para otros usuarios.</strong> La participación en rankings es voluntaria y puede desactivarse desde los ajustes de la Aplicación.</p>
+                <p><em>Base jurídica:</em> consentimiento del usuario al activar la participación en rankings (art. 6.1.a RGPD), revocable en cualquier momento desde los ajustes de la app, lo que eliminará tu entrada del ranking público.</p>
+
+                <p style="margin-top:16px;"><strong>3.4. Analíticas de comportamiento en la app (Firebase Analytics)</strong></p>
+                <p>Para mejorar la experiencia de usuario y detectar problemas, Focus Op utiliza <strong>Firebase Analytics (Google LLC)</strong>. Los datos recogidos son: eventos de interacción (inicio/fin de sesión, activación de bloqueos, acceso a secciones), tipo de dispositivo, versión de Android y de la app, idioma, país/región, duración de sesión e identificadores de instalación anónimos (Instance ID). Estos datos están <strong>seudonimizados</strong> y no permiten identificar directamente al usuario, y no se cruzan con los datos de cuenta de Supabase.</p>
+                <p><em>Base jurídica:</em> consentimiento (art. 6.1.a RGPD) solicitado al primer inicio de la app; e interés legítimo en la mejora del producto (art. 6.1.f RGPD).</p>
+                <p><em>Encargado:</em> Google LLC (EE.UU.), bajo Data Privacy Framework UE–EE.UU. y CCT. <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Política de privacidad</a>.</p>
+
+                <p style="margin-top:16px;"><strong>3.5. Registro de errores y diagnóstico (Firebase Crashlytics)</strong></p>
+                <p>En caso de fallo técnico, <strong>Firebase Crashlytics</strong> envía automáticamente un informe con: tipo de error, traza de pila (stack trace), modelo de dispositivo, versión de SO y de la app, y un identificador de instalación anónimo. <strong>No se incluyen datos de cuenta ni contenido del usuario.</strong></p>
+                <p><em>Base jurídica:</em> interés legítimo en garantizar la estabilidad técnica de la Aplicación (art. 6.1.f RGPD).</p>
+
+                <p style="margin-top:16px;"><strong>3.6. Publicidad (Google AdMob)</strong></p>
+                <p>La versión gratuita muestra anuncios gestionados por <strong>Google AdMob (Google LLC)</strong>. Los datos tratados para la entrega y medición de anuncios incluyen: identificador de publicidad de Android (GAID / Advertising ID), IP truncada, tipo de dispositivo y SO, e interacciones con anuncios (impresiones, clics). Conforme al <strong>Digital Services Act (Reglamento UE 2022/2065)</strong>, tienes derecho a <strong>rechazar los anuncios personalizados</strong>: accede a <em>Ajustes de Android → Google → Anuncios → Inhabilitar personalización de anuncios</em> o usa la opción equivalente en los ajustes de privacidad de la Aplicación. Los usuarios con cuenta premium que hayan eliminado los anuncios no están sujetos a este tratamiento.</p>
+                <p><em>Base jurídica:</em> consentimiento para anuncios personalizados (art. 6.1.a RGPD); interés legítimo para anuncios contextuales no personalizados (art. 6.1.f RGPD).</p>
+                <p><em>Encargado:</em> Google LLC. <a href="https://support.google.com/admob/answer/6128543" target="_blank" rel="noopener">Política de AdMob</a>.</p>
+
+                <p style="margin-top:16px;"><strong>3.7. Compras integradas (Google Play Billing)</strong></p>
+                <p>Las compras y suscripciones se gestionan íntegramente a través de <strong>Google Play Billing (Google LLC)</strong>. Google gestiona el pago y la facturación; <strong>Focus Op no accede en ningún momento a datos bancarios ni al número completo de la tarjeta.</strong> Focus Op únicamente recibe de Google: estado de la compra/suscripción (activo, caducado, cancelado), tipo de producto adquirido, fecha de transacción y un token de compra opaco. Este estado se almacena en Supabase vinculado a tu UUID para activar las funcionalidades premium. El derecho de desistimiento de 14 días (Directiva 2011/83/UE) puede quedar limitado para contenidos digitales ejecutados de forma inmediata conforme al art. 103.m) TRLGDCU. Para reembolsos, usa Google Play Store.</p>
+                <p><em>Base jurídica:</em> ejecución del contrato de compraventa (art. 6.1.b RGPD).</p>
+                <p><em>Encargado:</em> Google LLC. <a href="https://payments.google.com/payments/apis-secure/u/0/get_legal_document?ldo=0&ldt=privacynotice" target="_blank" rel="noopener">Política de pagos de Google</a>.</p>
+
+                <p style="margin-top:16px;"><strong>3.8. Sitio web — Analíticas anónimas (Vercel Analytics)</strong></p>
+                <p>El sitio web usa <strong>Vercel Analytics</strong>, que recopila métricas de visitas anónimas y agregadas (páginas vistas, país/región, tipo de dispositivo y navegador) sin cookies de seguimiento ni datos personales identificables.</p>
+                <p><em>Base jurídica:</em> interés legítimo (art. 6.1.f RGPD) dado el carácter no identificable de los datos.</p>
+
+                <h3>4. Proveedor de infraestructura en la nube: Supabase</h3>
+                <p><strong>Supabase, Inc.</strong> actúa como encargado del tratamiento para los servicios de autenticación (Supabase Auth) y base de datos (Supabase Database / PostgreSQL). Los servidores de Supabase pueden estar ubicados en la Unión Europea (región <code>eu-central-1</code> u equivalente) o en EE.UU. Las transferencias internacionales se realizan con las garantías del art. 46 RGPD mediante <strong>Cláusulas Contractuales Tipo (CCT)</strong> suscritas entre Supabase y el responsable del tratamiento. Supabase aplica cifrado en reposo (AES-256) y en tránsito (TLS 1.2+), Row Level Security (RLS) para control de acceso a nivel de fila, y copias de seguridad automáticas cifradas. Política de privacidad de Supabase: <a href="https://supabase.com/privacy" target="_blank" rel="noopener">supabase.com/privacy</a>.</p>
+
+                <h3>5. Permisos de Android solicitados</h3>
+                <ul>
+                    <li><strong>PACKAGE_USAGE_STATS:</strong> detecta qué app está en primer plano para el bloqueo de distracciones. Se procesa en tiempo real y no se almacena de forma identificable.</li>
+                    <li><strong>SYSTEM_ALERT_WINDOW:</strong> superpone la pantalla de bloqueo sobre otras apps durante sesiones activas.</li>
+                    <li><strong>POST_NOTIFICATIONS:</strong> recordatorios y alertas de sesión. Opcional y revocable desde los ajustes de Android.</li>
+                    <li><strong>FOREGROUND_SERVICE / FOREGROUND_SERVICE_SPECIAL_USE:</strong> mantiene el servicio activo en segundo plano durante una sesión (requerido por Android 14+).</li>
+                    <li><strong>RECEIVE_BOOT_COMPLETED:</strong> restaura sesiones y recordatorios programados tras reiniciar el dispositivo.</li>
+                    <li><strong>INTERNET / ACCESS_NETWORK_STATE:</strong> necesario para la sincronización con Supabase, carga de anuncios (AdMob), verificación de compras (Google Play Billing) y envío de analíticas e informes de errores.</li>
+                </ul>
+                <p>Focus Op <strong>no solicita ni usa</strong> permisos de acceso a contactos, cámara, micrófono, ubicación GPS, almacenamiento externo, SMS, historial de llamadas ni datos biométricos.</p>
+
+                <h3>6. Transferencias internacionales de datos</h3>
+                <p>Los proveedores Google LLC, Supabase Inc. y Vercel Inc. tienen sede en EE.UU. Todas las transferencias se realizan con las garantías exigidas por el art. 46 RGPD: adhesión al <strong>Data Privacy Framework UE–EE.UU.</strong> y/o <strong>Cláusulas Contractuales Tipo (CCT)</strong> aprobadas por la Comisión Europea. No se realizan transferencias a países sin nivel de protección adecuado sin las garantías correspondientes.</p>
+
+                <h3>7. Encargados del tratamiento</h3>
+                <ul>
+                    <li><strong>Supabase, Inc.</strong> — Autenticación, base de datos y sincronización en la nube. <a href="https://supabase.com/privacy" target="_blank" rel="noopener">Política de privacidad</a>.</li>
+                    <li><strong>Google LLC</strong> — Firebase Analytics, Crashlytics, AdMob, Google Play Billing. <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Política de privacidad</a>.</li>
+                    <li><strong>Vercel, Inc.</strong> — Alojamiento web y analíticas del sitio. <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener">Política de privacidad</a>.</li>
+                </ul>
+                <p>Todos los encargados han suscrito el correspondiente Acuerdo de Encargado del Tratamiento (DPA) y actúan únicamente según instrucciones del responsable.</p>
+
+                <h3>8. Plazos de conservación de datos</h3>
+                <ul>
+                    <li><strong>Datos de cuenta (Supabase Auth):</strong> durante la vigencia de la cuenta y hasta 30 días tras su eliminación (período de retención en copia de seguridad).</li>
+                    <li><strong>Datos de productividad y configuración (Supabase DB):</strong> durante la vigencia de la cuenta. Se eliminan permanentemente cuando el usuario solicita la supresión de su cuenta.</li>
+                    <li><strong>Datos de ranking (Supabase DB — públicos):</strong> durante la participación activa. Se eliminan o anonimizan al desactivar la participación o eliminar la cuenta.</li>
+                    <li><strong>Estado de compra/premium (Supabase DB):</strong> durante la vigencia de la cuenta; los registros de transacciones se conservan 5 años conforme a la Ley 58/2003 General Tributaria.</li>
+                    <li><strong>Analítica (Firebase):</strong> 14 meses por defecto, eliminación automática posterior.</li>
+                    <li><strong>Crashlytics:</strong> 90 días en servidores de Firebase.</li>
+                    <li><strong>Publicidad (AdMob):</strong> hasta 13 meses según la política de retención de Google Ads.</li>
+                </ul>
+
+                <h3>9. Eliminación de cuenta y datos</h3>
+                <p>Puedes solicitar la eliminación completa de tu cuenta y todos los datos asociados en cualquier momento desde <em>Ajustes → Cuenta → Eliminar cuenta</em> dentro de la Aplicación, o contactando a través de la ficha de Google Play. Tras la solicitud, los datos se eliminan de la base de datos activa de Supabase de forma inmediata y de las copias de seguridad en un plazo máximo de <strong>30 días</strong>. Los datos de transacciones sujetos a obligaciones fiscales se conservarán anonimizados durante el plazo legal obligatorio.</p>
+
+                <h3>10. Derechos del usuario (RGPD, arts. 15–22)</h3>
+                <p>Puedes ejercer en cualquier momento los siguientes derechos contactando a través de la ficha de Google Play:</p>
+                <ul>
+                    <li><strong>Acceso (art. 15):</strong> conocer qué datos tuyos se tratan y con qué finalidad.</li>
+                    <li><strong>Rectificación (art. 16):</strong> corregir datos inexactos (p. ej., tu correo electrónico).</li>
+                    <li><strong>Supresión / «derecho al olvido» (art. 17):</strong> eliminar tu cuenta y todos los datos asociados.</li>
+                    <li><strong>Limitación del tratamiento (art. 18):</strong> suspender el uso de tus datos en supuestos previstos por la ley.</li>
+                    <li><strong>Portabilidad (art. 20):</strong> recibir tus datos de productividad en formato estructurado y legible por máquina (JSON/CSV).</li>
+                    <li><strong>Oposición (art. 21):</strong> oponerte al tratamiento basado en interés legítimo, incluyendo el uso en rankings.</li>
+                    <li><strong>Retirada del consentimiento (art. 7.3):</strong> revocar el consentimiento para analíticas o anuncios personalizados sin que se vea afectada la licitud del tratamiento previo.</li>
+                    <li><strong>Decisiones automatizadas (art. 22):</strong> no ser objeto de decisiones basadas únicamente en tratamiento automatizado con efectos jurídicos significativos.</li>
+                </ul>
+                <p>Plazo de respuesta: <strong>1 mes</strong>, prorrogable a 3 meses en casos complejos con notificación previa. Si consideras que tus derechos no han sido atendidos, puedes reclamar ante la <strong>Agencia Española de Protección de Datos (AEPD)</strong> en <a href="https://www.aepd.es" target="_blank" rel="noopener">www.aepd.es</a> o ante cualquier autoridad de control de la UE.</p>
+
+                <h3>11. Gestión del consentimiento</h3>
+                <p>Al crear tu cuenta por primera vez, se mostrará un aviso de privacidad que permite gestionar el consentimiento para analíticas y publicidad personalizada de forma granular, libre, informada e inequívoca. Puedes revocar o modificar estos consentimientos en cualquier momento desde <em>Ajustes → Privacidad</em> en la Aplicación, sin que ello afecte al acceso a las funciones principales. Para anuncios personalizados, también puedes gestionarlo desde <em>Ajustes de Android → Google → Anuncios → Inhabilitar personalización de anuncios</em>.</p>
+
+                <h3>12. Cookies y tecnologías similares</h3>
+                <p>La Aplicación móvil no utiliza cookies. Supabase utiliza tokens JWT almacenados de forma segura en el almacenamiento interno de Android para gestionar las sesiones autenticadas; estos tokens no son cookies en el sentido de la LSSI-CE. El sitio web no emplea cookies de rastreo ni de terceros; solo tecnologías de almacenamiento local estrictamente necesarias para el funcionamiento técnico.</p>
+
+                <h3>13. Seguridad de los datos</h3>
+                <p>Medidas técnicas y organizativas aplicadas conforme al art. 32 RGPD:</p>
+                <ul>
+                    <li>Contraseñas almacenadas con <strong>hash bcrypt</strong>; nunca en texto plano.</li>
+                    <li>Comunicaciones con Supabase cifradas con <strong>TLS 1.2+</strong>.</li>
+                    <li>Datos en reposo en Supabase cifrados con <strong>AES-256</strong>.</li>
+                    <li>Control de acceso a nivel de fila (<strong>Row Level Security — RLS</strong>) en PostgreSQL: cada usuario solo puede leer y modificar sus propios datos; los datos de ranking son accesibles en solo lectura para otros usuarios conforme a las políticas definidas.</li>
+                    <li>Tokens JWT con <strong>expiración automática</strong> y rotación de tokens de refresco.</li>
+                    <li>Analíticas y crashlytics transmitidos mediante <strong>HTTPS</strong>.</li>
+                    <li>Advertising ID de Android <strong>restablecible</strong> por el usuario en cualquier momento.</li>
+                </ul>
+                <p>En caso de brecha de seguridad que afecte a derechos y libertades de los usuarios, se notificará a la AEPD en un plazo máximo de <strong>72 horas</strong> (art. 33 RGPD) y a los afectados sin dilación indebida cuando el riesgo sea alto (art. 34 RGPD).</p>
+
+                <h3>14. Menores de edad</h3>
+                <p>Focus Op no está dirigida a personas menores de <strong>16 años</strong> (edad mínima de consentimiento digital en España, art. 7 LOPDGDD). En países donde dicha edad sea inferior, se aplica el mínimo de 13 años conforme al art. 8 RGPD. El proceso de registro no incluye verificación de edad automatizada; si tenemos conocimiento de que un menor ha creado una cuenta, procederemos a su eliminación. El responsable legal puede solicitarlo contactando a través de Google Play.</p>
+
+                <h3>15. Modificaciones de esta Política</h3>
+                <p>Esta Política puede actualizarse por cambios normativos, nuevas funcionalidades o modificaciones en los servicios de terceros. La versión vigente estará siempre disponible en este sitio web y en la ficha de Google Play. Los cambios materiales (nuevos tipos de datos, nuevos encargados, nuevas finalidades) se comunicarán mediante notificación dentro de la Aplicación con un mínimo de <strong>30 días de antelación</strong>. El uso continuado de la Aplicación tras ese plazo implica la aceptación de la versión actualizada.</p>
+
+                <h3>16. Ley aplicable y jurisdicción</h3>
+                <p>Esta Política se rige por el Derecho español y la normativa europea de protección de datos. Para cualquier controversia que no pueda resolverse amistosamente, las partes se someten a los Juzgados y Tribunales del domicilio del usuario consumidor (art. 52.3 LEC y normativa de consumidores), sin perjuicio del derecho irrenunciable a acudir a la AEPD o a cualquier autoridad de control de la UE.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== HERO ====== -->
     <section class="hero">
         <img src="icono.png" alt="Focus Op" class="logo-main reveal active">
         <h1 class="reveal active">FOCUS <span>OP</span></h1>
@@ -204,6 +472,7 @@
         </div>
     </section>
 
+    <!-- ====== FEATURES ====== -->
     <section class="content-section" id="features-section">
         <h2 class="reveal" style="font-size: 3.5rem; margin-bottom: 40px;">Identidad Élite</h2>
         <p class="about-text reveal" style="font-size: 1.5rem; color: #94a3b8; line-height: 1.7; max-width: 800px; margin: 0 auto;">
@@ -229,6 +498,7 @@
         </div>
     </section>
 
+    <!-- ====== CARRUSEL ====== -->
     <h2 class="reveal" style="text-align: center; font-size: 2rem; color: var(--accent);">Performance Dashboard</h2>
     <div class="carousel-container reveal">
         <div class="carousel-track">
@@ -389,24 +659,35 @@
         </div>
     </div>
 
+    <!-- ====== DOWNLOAD CTA ====== -->
     <section class="hero" id="download-section" style="height: auto; padding: 180px 20px;">
         <h2 class="reveal" style="font-size: 3.5rem;">¿Listo para subir de nivel?</h2>
         <div style="margin-top: 50px;" class="reveal">
             <a href="https://www.mediafire.com/file/o7wwuos6j0q55jb/AIFocusOP_v0.1.1.apk/file" target="_blank" class="btn-main">INSTALAR FOCUS OP</a>
             <p class="android-note">(Disponible solo para Android por el momento)</p>
-            <p class="android-note">(AIFoucsOP_v0.1.1)</p>
+            <p class="android-note">(AIFocusOP_v0.1.1)</p>
         </div>
     </section>
 
-    <footer>&copy; 2026 FOCUS OPERATOR • FUTURE OF WORK • ANDROID EXCLUSIVE</footer>
+    <!-- ====== FOOTER ====== -->
+    <footer>
+        <div class="footer-links">
+            <a onclick="document.getElementById('privacyModal').classList.add('open')">Política de Privacidad</a>
+            <a href="#features-section">Features</a>
+            <a href="#download-section">Descargar</a>
+        </div>
+        <p class="footer-copy">&copy; 2026 Focus Operator &bull; Future of Work &bull; Android Exclusive</p>
+    </footer>
 
     <script>
+        // Custom cursor
         const cursor = document.getElementById('custom-cursor');
         document.addEventListener('mousemove', (e) => {
             cursor.style.left = e.clientX + 'px';
             cursor.style.top = e.clientY + 'px';
         });
 
+        // Smooth scroll hero CTA
         const startBtn = document.querySelector('a[href="#features-section"]');
         if (startBtn) {
             startBtn.addEventListener('click', function(e) {
@@ -415,12 +696,25 @@
             });
         }
 
+        // Reveal on scroll
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) entry.target.classList.add('active');
             });
         }, { threshold: 0.1 });
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // Privacy modal
+        const modal = document.getElementById('privacyModal');
+        const modalClose = document.getElementById('modalClose');
+
+        modalClose.addEventListener('click', () => modal.classList.remove('open'));
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) modal.classList.remove('open');
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') modal.classList.remove('open');
+        });
     </script>
 </body>
 </html>
